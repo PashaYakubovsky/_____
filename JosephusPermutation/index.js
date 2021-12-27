@@ -30,24 +30,31 @@
 
 const getJosephus = ({ index, items, newItems, step }) => {
     if (items.length === 1) {
-        console.log("asdasdas");
         return [...newItems, items[0]];
     }
 
-    const curLength = items.length - 1;
-    const curItem = curLength === 1 ? items[0] : items[index];
-    const newIndex = index + step - curLength - 1 < 0 ? index + step : index + step - curLength - 1;
+    const curLength = items.length;
+    const curItem = items[index];
 
-    getJosephus({
+    let newIndex = 0;
+    if (index + step >= curLength) {
+        newIndex = (index + step) % curLength;
+
+        while (newIndex >= curLength - 1) {
+            newIndex = curLength % newIndex;
+        }
+    } else {
+        newIndex = index + step - 1;
+    }
+
+    return getJosephus({
         index: newIndex,
-        items: [...items.slice(0, index), ...items.slice(index)],
+        items: [...items.slice(0, index), ...items.slice(index + 1)],
         newItems: [...newItems, curItem],
         step,
     });
 };
+const josephus = (items, k) =>
+    items.length === 0 ? [] : getJosephus({ index: k - 1, items, newItems: [], step: k });
 
-const josephus = (items, k) => {
-    getJosephus({ index: k - 1, items, newItems: [], step: k });
-};
-
-josephus([1, 2, 3, 4, 5, 6, 7, 8, 9, 10], 2);
+console.log(josephus([1, 2, 3, 4, 5, 6, 7], 3));

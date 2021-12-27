@@ -25,31 +25,41 @@
 
 const smallest = n => {
     const numArr = String(n).split("");
-    const listAnswers = [];
+    let listAnswers = [];
 
-    for (let i = 0; i < numArr.length; i++) {
+    const lastNum = numArr[numArr.length - 1];
+    if (lastNum === 0) {
+        return [lastNum, numArr.length - 1, 0];
+    }
+
+    for (let i = numArr.length - 1; i >= 0; i--) {
         const sliceNum = +numArr[i];
         const filterNumArr = [...numArr.slice(0, i), ...numArr.slice(i + 1)];
 
-        for (let j = 0; j < numArr.length; j++) {
+        for (let j = numArr.length - 1; j >= 0; j--) {
             const num = +[...filterNumArr.slice(0, j), sliceNum, ...filterNumArr.slice(j)].join("");
 
             if (num < n) {
                 let indexTo = j;
-                if (+sliceNum === +numArr[j]) {
-                    indexTo++;
-                }
 
-                listAnswers.push([num, i, indexTo]);
+                listAnswers = listAnswers.reduce((acc, cur) => {
+                    return Array.isArray(cur) && cur[0] < num
+                        ? [...acc, [num, i, indexTo]]
+                        : [...acc];
+                }, listAnswers);
+
+                if (listAnswers.length === 0) {
+                    listAnswers = [[num, i, indexTo]];
+                }
             }
         }
     }
 
-    listAnswers.sort((a, b) => a[0] - b[0]);
-    return listAnswers[0] || [n, 0, 0];
+    return listAnswers[listAnswers.length - 1] || [n, 0, 0];
 };
 
-smallest(6885772360095333);
+console.log(1193386764729849 < 1933867647291489);
+console.log(smallest(1933867647291849));
 /*
     testing(261235, [126235, 2, 0]);
     testing(209917, [29917, 0, 1]);
